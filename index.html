@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Responsive Project</title>
+  <style>
+    body {
+      font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #7ac1f0;
+      color: #333;
+      text-align: center;
+    }
+
+    h1 {
+      color: #010e1e;
+      margin-bottom: 30px;
+    }
+
+    .carousel {
+      position: relative;
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .carousel img {
+      width: 300px;
+      height: 300px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.5s ease;
+    }
+
+    .carousel-controls {
+      margin-top: 10px;
+    }
+
+    button {
+      background-color: #f5e478;
+      color: rgb(85, 3, 3);
+      border: none;
+      padding: 10px 18px;
+      margin: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ebf289;
+    }
+
+    .joke-section {
+      margin-top: 40px;
+    }
+
+    #joke-output {
+      font-size: 18px;
+      margin-top: 20px;
+      background-color: #cdbe72;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .loading {
+      font-style: italic;
+      color: rgb(44, 2, 2);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+      button {
+        width: 100%;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1> Interactive Carousel & Joke Generator</h1>
+
+  <!-- Image Carousel -->
+  <div class="carousel">
+    <img src="image1.jpg" id="carousel-image" />
+    <div class="carousel-controls">
+      <button onclick="nextImage()">Next</button>
+    </div>
+  </div>
+
+  <!-- Joke Section -->
+  <div class="joke-section">
+    <h2>😂 Need a Laugh?</h2>
+    <button onclick="getJoke()">Get a Joke</button>
+    <div id="joke-output" class="loading">Click the button to get a joke!</div>
+  </div>
+
+  <script>
+    // ------------------ Image Carousel ------------------ //
+    const images = [
+      "image1.jpg",
+      "image2.jpg",
+      "image3.jpg",
+      "image4.jpg",
+      "image5.jpg"
+    ];
+    let currentIndex = 0;
+
+    function updateImage() {
+      const img = document.getElementById("carousel-image");
+      img.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        img.src = images[currentIndex];
+        img.style.transform = "scale(1)";
+      }, 150);
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateImage();
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateImage();
+    }
+
+    // ------------------ Joke Fetcher ------------------ //
+    function getJoke() {
+      const output = document.getElementById("joke-output");
+      output.innerHTML = "<span class='loading'>Fetching a joke...</span>";
+
+      fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(response => {
+          if (!response.ok) throw new Error("Failed to fetch.");
+          return response.json();
+        })
+        .then(data => {
+          output.innerHTML = `<p><strong>${data.setup}</strong></p><p>${data.punchline}</p>`;
+        })
+        .catch(err => {
+          output.innerHTML = "<span style='color: red;'>Oops! Could not load joke.</span>";
+          console.error(err);
+        });
+    }
+  </script>
+
+</body>
+</html>
